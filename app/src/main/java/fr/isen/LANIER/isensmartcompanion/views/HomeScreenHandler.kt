@@ -85,6 +85,7 @@ fun requestField(chatMessages : MutableList<String>, db : AppDataBase){
                     dao.insert(ChatMessage(message = userPrompt, isFromUser = true, date = currentDate))
                     dao.insert(ChatMessage(message = inference, isFromUser = false, date = currentDate))
                 }
+                userPrompt = ""
             },
             containerColor = MaterialTheme.colorScheme.primary
         ) {

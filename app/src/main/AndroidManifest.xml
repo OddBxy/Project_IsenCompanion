@@ -28,6 +28,9 @@
             tools:ignore="Instantiatable"
             android:theme="@style/Theme.ISENSmartCompanion">
         </activity>
+        <meta-data
+            android:name="apiKey"
+            android:value="${API_KEY}"/>
     </application>
 
 </manifest>

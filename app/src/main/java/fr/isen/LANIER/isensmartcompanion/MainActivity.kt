@@ -1,5 +1,6 @@
 package fr.isen.LANIER.isensmartcompanion
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,13 +52,13 @@ import fr.isen.LANIER.isensmartcompanion.views.HistoryScreen
 import fr.isen.LANIER.isensmartcompanion.views.chatDisplay
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
         )
         setContent {
             val navController = rememberNavController()
+            val t= applicationContext.packageManager.getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
             val db = Room.databaseBuilder(
                 LocalContext.current,
                 AppDataBase::class.java, "historyDataBase"

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -18,6 +21,20 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+/*        val localProperties = Properties().apply {
+            val localPropertiesFile = rootProject.file("local.properties")
+            localPropertiesFile.inputStream().use { it }
+        }*/
+
+        val localProperties = Properties()
+        localProperties.load( FileInputStream(project.rootProject.file("local.properties")) )
+
+        manifestPlaceholders["API_KEY"] = localProperties["API_KEY"] ?: "NONE"
+
+        //println("key : ${localProperties.getProperty("API_KEY")}") //ok
+
+        buildConfigField("String", "API_KEY", "\"${localProperties.getProperty("API_KEY")}\"")
     }
 
     buildTypes {
@@ -38,8 +55,10 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
+
 
 dependencies {
 

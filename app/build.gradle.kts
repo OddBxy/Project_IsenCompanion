@@ -98,5 +98,8 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
+    val core_version = "1.15.0"
+    implementation("androidx.core:core-ktx:$core_version")
+
 }
 

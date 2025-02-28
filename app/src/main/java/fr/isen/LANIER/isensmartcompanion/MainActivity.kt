@@ -1,7 +1,14 @@
 package fr.isen.LANIER.isensmartcompanion
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -54,8 +61,8 @@ import fr.isen.LANIER.isensmartcompanion.views.chatDisplay
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-        )
+        enableEdgeToEdge()
+        createChannel()
         setContent {
             val navController = rememberNavController()
             val db = Room.databaseBuilder(
@@ -78,6 +85,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
+    private fun createChannel(){
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            var channel = NotificationChannel("EVENTS","eventsChannel", NotificationManager.IMPORTANCE_DEFAULT)
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,6 +145,4 @@ fun bottomNavBar(navController: NavController){
             onClick = {navController.navigate(Routes.EVENTSRoute)},
         )
     }
-
-
 }

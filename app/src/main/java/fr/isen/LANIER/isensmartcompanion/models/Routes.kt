@@ -4,4 +4,5 @@ object Routes {
     val HOMERoute = "HomeScreen"
     val EVENTSRoute = "EventScreen"
     val HISTORYRoute = "HistoryRoute"
+    val CALENDARRoute = "CalendarRoute"
 }

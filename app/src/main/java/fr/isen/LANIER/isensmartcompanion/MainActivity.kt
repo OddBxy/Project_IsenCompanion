@@ -1,14 +1,10 @@
 package fr.isen.LANIER.isensmartcompanion
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,10 +23,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,15 +48,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import fr.isen.LANIER.isensmartcompanion.models.AppDataBase
 import fr.isen.LANIER.isensmartcompanion.models.Routes
 import fr.isen.LANIER.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
+import fr.isen.LANIER.isensmartcompanion.views.CalendarView
 import fr.isen.LANIER.isensmartcompanion.views.EventScreen
 import fr.isen.LANIER.isensmartcompanion.views.HistoryScreen
 import fr.isen.LANIER.isensmartcompanion.views.chatDisplay
-import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 AppDataBase::class.java, "historyDataBase"
             ).fallbackToDestructiveMigration().build()
 
-            ISENSmartCompanionTheme {
+            ISENSmartCompanionTheme() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
                     topBar = {HeaderBar()},
@@ -84,6 +78,7 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.HOMERoute) { chatDisplay(mod = Modifier.padding(innerPadding), db) }
                         composable(Routes.EVENTSRoute) { EventScreen(mod = Modifier.padding(innerPadding)) }
                         composable(Routes.HISTORYRoute) { HistoryScreen(mod = Modifier.padding(innerPadding),db) }
+                        composable(Routes.CALENDARRoute) { CalendarView(mod = Modifier.padding(innerPadding)) }
                     })
                 }
             }
@@ -108,7 +103,7 @@ class MainActivity : ComponentActivity() {
 fun HeaderBar() {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
@@ -147,6 +142,11 @@ fun bottomNavBar(navController: NavController){
             icon = { Icon(Icons.Filled.Info, "EventLogo") },
             selected = false,
             onClick = {navController.navigate(Routes.EVENTSRoute)},
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.DateRange, "CalendarLogo") },
+            selected = false,
+            onClick = {navController.navigate(Routes.CALENDARRoute)},
         )
     }
 }

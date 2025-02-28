@@ -16,4 +16,7 @@ interface ChatHistoryDao {
 
     @Delete
     suspend fun deleteOne(vararg chatMessage: ChatMessage)
+
+    @Query("DELETE FROM chatmessage")
+    suspend fun deleteAll()
 }

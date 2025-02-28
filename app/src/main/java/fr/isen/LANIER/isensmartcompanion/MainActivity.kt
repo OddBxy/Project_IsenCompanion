@@ -58,7 +58,6 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             val navController = rememberNavController()
-            val t= applicationContext.packageManager.getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
             val db = Room.databaseBuilder(
                 LocalContext.current,
                 AppDataBase::class.java, "historyDataBase"

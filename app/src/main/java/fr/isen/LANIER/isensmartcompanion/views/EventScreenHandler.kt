@@ -2,15 +2,24 @@ package fr.isen.LANIER.isensmartcompanion.views
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
@@ -23,8 +32,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.LANIER.isensmartcompanion.EventActivity
+import fr.isen.LANIER.isensmartcompanion.models.ChatMessage
+import fr.isen.LANIER.isensmartcompanion.models.GoogleIA
 import fr.isen.LANIER.isensmartcompanion.services.EventsService
 import fr.isen.LANIER.isensmartcompanion.models.IsenEvent
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,7 +66,9 @@ fun EventScreen(mod: Modifier){
 
     if(events.value.isEmpty()){
         Column(
-            modifier = mod.fillMaxSize().padding(40.dp),
+            modifier = mod
+                .fillMaxSize()
+                .padding(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
@@ -80,6 +94,7 @@ fun EventScreen(mod: Modifier){
 fun displayEvent(event: IsenEvent){
     val context = LocalContext.current
     var intent = Intent(context, EventActivity::class.java)
+    val icon = remember { mutableStateOf(Icons.Filled.Notifications) }
     Card(
         onClick = {
             intent.putExtra("event", event)
@@ -91,10 +106,21 @@ fun displayEvent(event: IsenEvent){
         border = BorderStroke(1.dp, Color.Black),
 
     ) {
-        Column (Modifier.padding(5.dp)){
-            Text(event.title)
-            Text("Location : ${event.location}")
-            Text("Date : ${event.date}")
+        Row (verticalAlignment = Alignment.CenterVertically){
+            Column (Modifier.width(275.dp).padding(10.dp)){
+                Text(event.title)
+                Text("Location : ${event.location}")
+                Text("Date : ${event.date}")
+            }
+            FloatingActionButton(
+                onClick = {
+                    Log.i("CHECKBUTTON", "button pushed ")
+                    icon.value = Icons.Filled.Check
+                },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(icon.value, "notificationIcon")
+            }
         }
     }
 

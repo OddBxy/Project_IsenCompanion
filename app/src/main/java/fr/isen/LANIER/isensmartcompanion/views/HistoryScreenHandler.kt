@@ -2,6 +2,8 @@ package fr.isen.LANIER.isensmartcompanion.views
 
 import android.provider.CalendarContract.Colors
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.isen.LANIER.isensmartcompanion.models.AppDataBase
 import fr.isen.LANIER.isensmartcompanion.models.ChatMessage
+import fr.isen.LANIER.isensmartcompanion.models.GoogleIA
+import fr.isen.LANIER.isensmartcompanion.services.ChatHistoryDao
 import fr.isen.LANIER.isensmartcompanion.views.components.displayResponse
 import fr.isen.LANIER.isensmartcompanion.views.components.displayUserPrompt
 import kotlinx.coroutines.launch
@@ -39,6 +50,30 @@ import kotlinx.coroutines.launch
 @Composable
 fun HistoryScreen(mod : Modifier,db : AppDataBase){
     val dao = db.chatHistoryDao()
+    val coroutine = rememberCoroutineScope()
+
+    Scaffold(
+        modifier = mod,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    coroutine.launch {
+                        dao.deleteAll()
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Filled.Delete, "deleteHistoryButton")
+            }
+        }
+    ) { innerPadding ->
+        displayChatHistory(Modifier.padding(innerPadding), dao)
+    }
+
+}
+
+@Composable
+fun displayChatHistory(mod : Modifier, dao : ChatHistoryDao){
     var messageHistory = remember {mutableStateOf( listOf<ChatMessage>() )}
     val coroutine = rememberCoroutineScope()
 
@@ -82,6 +117,5 @@ fun HistoryScreen(mod : Modifier,db : AppDataBase){
         }
 
     }
-
 
 }

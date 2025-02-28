@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,12 +52,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import fr.isen.LANIER.isensmartcompanion.models.AppDataBase
 import fr.isen.LANIER.isensmartcompanion.models.Routes
 import fr.isen.LANIER.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 import fr.isen.LANIER.isensmartcompanion.views.EventScreen
 import fr.isen.LANIER.isensmartcompanion.views.HistoryScreen
 import fr.isen.LANIER.isensmartcompanion.views.chatDisplay
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,7 +139,7 @@ fun bottomNavBar(navController: NavController){
             onClick = {navController.navigate(Routes.HOMERoute)},
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Search, "SearchLogo") },
+            icon = { Icon(Icons.Filled.Refresh, "SearchLogo") },
             selected = false,
             onClick = {navController.navigate(Routes.HISTORYRoute)},
         )

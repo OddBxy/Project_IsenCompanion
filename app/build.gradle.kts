@@ -100,6 +100,6 @@ dependencies {
 
     val core_version = "1.15.0"
     implementation("androidx.core:core-ktx:$core_version")
-
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 }
 

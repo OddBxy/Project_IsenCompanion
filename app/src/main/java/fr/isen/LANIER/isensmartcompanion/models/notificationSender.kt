@@ -3,6 +3,8 @@ package fr.isen.LANIER.isensmartcompanion.models
 import android.content.ClipDescription
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,13 +19,15 @@ object notificationSender {
     var id = 0
 
     //function needs to be suspend to delay the notification
-    suspend fun sendNotification(context : Context, title : String, description: String, delay : Long){
+    fun sendNotification(context : Context, title : String, description: String, delay : Long){
 
         var notificationBuilder = NotificationCompat.Builder(context, "EVENTS")
             .setSmallIcon(R.drawable.test)
             .setContentTitle(title)
             .setContentText(description)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(description))
 
         with(NotificationManagerCompat.from(context)){
             if (ActivityCompat.checkSelfPermission(
@@ -35,8 +39,14 @@ object notificationSender {
             }
 
             //sending notification after a delay
-            delay(delay)
-            notify(id, notificationBuilder.build())
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed(
+                {
+                    notify(id, notificationBuilder.build())
+
+                },
+                delay
+            )
 
             //updating id
             id+=1

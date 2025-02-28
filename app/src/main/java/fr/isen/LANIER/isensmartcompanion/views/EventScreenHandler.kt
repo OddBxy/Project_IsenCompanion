@@ -1,6 +1,8 @@
 package fr.isen.LANIER.isensmartcompanion.views
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -98,8 +100,8 @@ fun EventScreen(mod: Modifier){
 fun displayEvent(event: IsenEvent){
     val context = LocalContext.current
     var intent = Intent(context, EventActivity::class.java)
-    val coroutine = rememberCoroutineScope()
-    var isNotified by remember { mutableStateOf(false) }
+    val sharedPreferences = context.getSharedPreferences("eventsNotifier", Context.MODE_PRIVATE)
+    var isNotified by remember { mutableStateOf(sharedPreferences.contains(event.title) ?: false) }
 
     Card(
         onClick = {
@@ -122,9 +124,15 @@ fun displayEvent(event: IsenEvent){
             }
             FloatingActionButton(
                 onClick = {
-                    Log.i("CHECKBUTTON", "button pushed ")
-                    isNotified = true
-                    notificationSender.sendNotification(context, event.title, event.description, 10000)  //sending a notification
+                    if(isNotified == true){
+                        sharedPreferences.edit().remove(event.title).apply()
+                        isNotified = false
+                        notificationSender.cancelNotification()
+                    }else{
+                        sharedPreferences.edit().putBoolean(event.title, true).apply()
+                        isNotified = true
+                        notificationSender.sendNotification(context, event.title, event.description, 10000)  //sending a notification
+                    }
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {

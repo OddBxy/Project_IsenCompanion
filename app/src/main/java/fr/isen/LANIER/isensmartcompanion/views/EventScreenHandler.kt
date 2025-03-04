@@ -21,9 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.LANIER.isensmartcompanion.EventActivity
 import fr.isen.LANIER.isensmartcompanion.models.IsenEvent
-import fr.isen.LANIER.isensmartcompanion.models.notificationSender
+import fr.isen.LANIER.isensmartcompanion.services.EventFetcher
+import fr.isen.LANIER.isensmartcompanion.services.NotificationSender
 import fr.isen.LANIER.isensmartcompanion.services.EventsService
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,28 +46,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun EventScreen(mod: Modifier){
-    val events_url = "https://isen-smart-companion-default-rtdb.europe-west1.firebasedatabase.app/events.json/"
-
     var events by remember { mutableStateOf(listOf<IsenEvent>()) }
-    val api = Retrofit.Builder()
-        .baseUrl(events_url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(EventsService::class.java)
 
-    api.getEvents().enqueue(object : Callback<List<IsenEvent>>{
-        override fun onResponse(call: Call<List<IsenEvent>>, res: Response<List<IsenEvent>>) {
-            if(res.isSuccessful){
-                events = res.body()!!
-                Log.i("CHECL", "onResponse: $events")
-            }
-        }
+    //use singleton to get all events
+    EventFetcher.getAllEvents { events = it }
 
-        override fun onFailure(p0: Call<List<IsenEvent>>, t: Throwable) {
-            Log.i("CHECK", "onFailure: ${t.message}")
-        }
 
-    })
 
     if(events.isEmpty()){
         Column(
@@ -103,12 +91,16 @@ fun displayEvent(event: IsenEvent){
             intent.putExtra("event", event)
             context.startActivity(intent)
         },
-        Modifier.fillMaxWidth().padding(10.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
             
     ) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Column (
-                Modifier.width(275.dp).padding(10.dp)
+                Modifier
+                    .width(275.dp)
+                    .padding(10.dp)
             ){
                 Text(event.title)
                 Text("Location : ${event.location}")
@@ -120,11 +112,11 @@ fun displayEvent(event: IsenEvent){
                     if(isNotified == true){
                         sharedPreferences.edit().remove(event.title).apply()
                         isNotified = false
-                        notificationSender.cancelNotification()
+                        NotificationSender.cancelNotification()
                     }else{
                         sharedPreferences.edit().putBoolean(event.title, true).apply()
                         isNotified = true
-                        notificationSender.sendNotification(context, event.title, event.description, 10000)  //sending a notification
+                        NotificationSender.sendNotification(context, event.title, event.description, 10000)  //sending a notification
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primary

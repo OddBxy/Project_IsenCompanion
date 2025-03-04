@@ -1,4 +1,4 @@
-package fr.isen.LANIER.isensmartcompanion.models
+package fr.isen.LANIER.isensmartcompanion.services
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -12,7 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-object notificationSender {
+object NotificationSender {
     //singleton which handles sending notification
 
     //id is remembered since its in a singleton
@@ -24,7 +24,7 @@ object notificationSender {
     fun sendNotification(context : Context, title : String, description: String, delay : Long){
 
         var notificationBuilder = NotificationCompat.Builder(context, "EVENTS")
-            .setSmallIcon(R.drawable.test)
+            .setSmallIcon(R.drawable.isen_app_icon)
             .setContentTitle(title)
             .setContentText(description)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -46,7 +46,7 @@ object notificationSender {
             }
 
             //updating id and lastRunnable
-            id+=1
+            id +=1
         }
     }
 

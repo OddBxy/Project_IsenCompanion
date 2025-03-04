@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import fr.isen.LANIER.isensmartcompanion.models.AppDataBase
 import fr.isen.LANIER.isensmartcompanion.models.ChatMessage
-import fr.isen.LANIER.isensmartcompanion.models.GoogleIA
+import fr.isen.LANIER.isensmartcompanion.services.GoogleIA
 import fr.isen.LANIER.isensmartcompanion.views.components.displayResponse
 import fr.isen.LANIER.isensmartcompanion.views.components.displayUserPrompt
 import kotlinx.coroutines.launch

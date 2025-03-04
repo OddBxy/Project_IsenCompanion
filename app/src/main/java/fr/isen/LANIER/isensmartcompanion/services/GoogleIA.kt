@@ -1,9 +1,6 @@
-package fr.isen.LANIER.isensmartcompanion.models
+package fr.isen.LANIER.isensmartcompanion.services
 
 
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
-import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import fr.isen.LANIER.isensmartcompanion.BuildConfig
 

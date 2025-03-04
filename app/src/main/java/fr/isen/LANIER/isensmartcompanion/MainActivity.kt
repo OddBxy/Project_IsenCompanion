@@ -110,7 +110,7 @@ fun HeaderBar() {
             Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically )
             {
                 Image(
-                    painter= painterResource(id = R.drawable.test),
+                    painter= painterResource(id = R.drawable.isen_app_icon),
                     contentDescription = "",
                     modifier = Modifier.size(40.dp).clip(CircleShape)
                 )

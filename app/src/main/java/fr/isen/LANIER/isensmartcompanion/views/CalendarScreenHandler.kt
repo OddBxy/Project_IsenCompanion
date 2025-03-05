@@ -24,6 +24,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -50,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -207,6 +211,7 @@ fun displaySchedule(datePickerState: DatePickerState){
 
 @Composable
 fun displayTodayEvents(datePickerState: DatePickerState){
+    var isExpanded by remember { mutableStateOf(false) }
     var isenEvents by remember { mutableStateOf(listOf<IsenEvent>()) }
     //use singleton to get all events
     EventFetcher.getAllEvents { isenEvents = it }
@@ -225,27 +230,53 @@ fun displayTodayEvents(datePickerState: DatePickerState){
     Column (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onSecondary)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ){
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)){
-                    append("Events")
-                }
+            .fillMaxWidth()
+            .clickable {
+                isExpanded = !isExpanded
             }
-        )
+    ){
+        Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)){
+                        append("Events")
+                    }
+                }
+            )
+            if(!isExpanded){
+                Icon(Icons.Filled.KeyboardArrowDown, "dropdown logo")
+            }
+            else{
+                Icon(Icons.Filled.KeyboardArrowUp, "dropdown logo")
+            }
+        }
 
-        //cant use lazyColumn in column with modifier.verticalScroll
-        Column(
-            Modifier.padding(10.dp),
-        ) {
-            for(event in todayEvents){
-                Text("${event.category} : \n${event.title}", modifier = Modifier.padding(horizontal = 0.dp, vertical = 10.dp))
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+        if(isExpanded){
+            //cant use lazyColumn in column with modifier.verticalScroll
+            Column(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                if(todayEvents.isEmpty()){
+                    Text(
+                        "No scheduled events for this day",
+                        Modifier.fillMaxWidth().padding(10.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                else{
+                    for(event in todayEvents){
+                        Column(
+                            Modifier.padding(10.dp).fillMaxWidth(9/10f)
+                        ) {
+                            Text("${event.category} : \n${event.title}", modifier = Modifier.padding(horizontal = 0.dp, vertical = 10.dp))
+                            HorizontalDivider(
+                                thickness = 2.dp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                    }
+                }
             }
         }
     }

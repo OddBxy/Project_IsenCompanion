@@ -37,6 +37,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -162,6 +163,7 @@ fun showDatePicker(date : DatePickerState, onDismiss: () -> Unit){
 
 @Composable
 fun displaySchedule(datePickerState: DatePickerState){
+    var isExpanded by remember { mutableStateOf(true) }
     var isenCours by remember { mutableStateOf(listOf<IsenCour>()) }
     val context = LocalContext.current
     val file = BufferedReader(InputStreamReader(context.assets.open("coursisen.json")))
@@ -180,32 +182,70 @@ fun displaySchedule(datePickerState: DatePickerState){
     classes.sortBy { it.hourStart }
 
     //cant use lazyColumn in column with modifier.verticalScroll
-    Column (Modifier.fillMaxHeight() ){
-        for(currentClass in classes){
-            Card( Modifier.height(115.dp).padding(10.dp).fillMaxWidth() ) {
+    Column (modifier = Modifier.background(MaterialTheme.colorScheme.onSecondary).fillMaxWidth()) {
 
-                Row(Modifier.background(MaterialTheme.colorScheme.onSecondary).fillMaxWidth().padding(10.dp)) {
-                    Card(Modifier.fillMaxWidth(1/5f).fillMaxHeight()) {
-                        Column(
-                            Modifier.fillMaxSize().padding(1.dp),
-                            verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text( currentClass.hourStart.toString() + " h" )
-                            Text( "to" )
-                            Text( currentClass.hourEnd.toString() + " h")
-                        }
-                    }
-                    Spacer(Modifier.width(10.dp))
-                    Column {
-                        Text(currentClass.title, fontWeight = FontWeight.Bold)
-                        Text("Teacher : ${currentClass.teacher}", fontSize = 13.sp)
-                        Text("Room ${currentClass.room}", fontSize = 13.sp)
+        Row(
+            Modifier.fillMaxWidth()
+                .padding(10.dp)
+                .clickable {
+                    isExpanded = !isExpanded
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)){
+                        append("Classes")
                     }
                 }
-
+            )
+            if(!isExpanded){
+                Icon(Icons.Filled.KeyboardArrowDown, "dropdown logo")
+            }
+            else{
+                Icon(Icons.Filled.KeyboardArrowUp, "dropdown logo")
             }
         }
+
+        if(isExpanded){
+            if(classes.isEmpty()){
+                Text(
+                    "No scheduled classes for this day",
+                    Modifier.fillMaxWidth().padding(10.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            else{
+                for(currentClass in classes){
+                    OutlinedCard(
+                        Modifier.height(110.dp).padding(10.dp).fillMaxWidth() ,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                    ) {
+
+                        Row(Modifier.background(MaterialTheme.colorScheme.onSecondary).fillMaxSize()) {
+                            Column(
+                                Modifier.fillMaxWidth(1/4f).fillMaxHeight().background(MaterialTheme.colorScheme.primary),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text( currentClass.hourStart.toString() + " h", color = MaterialTheme.colorScheme.background )
+                                Text( "to", color = MaterialTheme.colorScheme.background )
+                                Text( currentClass.hourEnd.toString() + " h", color = MaterialTheme.colorScheme.background)
+                            }
+                            //Spacer(Modifier.width(10.dp))
+                            Column(Modifier.padding(10.dp)) {
+                                Text(currentClass.title, fontWeight = FontWeight.Bold)
+                                Text("Teacher : ${currentClass.teacher}", fontSize = 13.sp)
+                                Text("Room ${currentClass.room}", fontSize = 13.sp)
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -231,11 +271,16 @@ fun displayTodayEvents(datePickerState: DatePickerState){
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onSecondary)
             .fillMaxWidth()
-            .clickable {
-                isExpanded = !isExpanded
-            }
     ){
-        Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            Modifier.fillMaxWidth()
+            .padding(10.dp)
+            .clickable {
+                    isExpanded = !isExpanded
+            },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)){
